@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Reviews &amp; Reputation Impact Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import Google Fonts for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables for easy color adjustments */
+    :root {
+      --bg-color: #121212;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --primary: #BB86FC; /* Neon-ish purple */
+      --secondary: #03DAC6; /* Neon turquoise */
+      --accent: #FF4081; /* Vibrant pink, used sparingly */
+      /* CTA colors now subtler */
+      --cta-color: #6C757D;
+      --cta-hover: #5A6268;
+      --text-color: #E0E0E0;
+      --muted-text: #AAAAAA;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --cta-border: rgba(108, 117, 125, 0.7);
+    }
+
+    /* Global Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    h1, h2, h3, h4 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+    h3 {
+      font-size: 1.5rem;
+      color: var(--text-color);
+    }
+    h4 {
+      font-size: 1.25rem;
+      color: var(--bg-color);
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+    }
+    p {
+      margin-bottom: 1rem;
+    }
+
+    /* Notification Area - More Subtle */
+    #notification {
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 1rem auto;
+      max-width: 500px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--muted-text);
+      border: 1px solid var(--border-color);
+      display: none;
+    }
+    #notification.error {
+      background: rgba(255, 235, 238, 0.15);
+      color: #FFCDD2;
+      border: 1px solid rgba(255, 205, 210, 0.5);
+    }
+
+    /* Main Container - Glassmorphism Style */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      animation: fadeInScale 0.8s ease-out;
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Section Headers & Dividers */
+    .section-header {
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+    }
+    .help-text {
+      text-align: center;
+      color: var(--muted-text);
+      margin-bottom: 1rem;
+    }
+    .highlight {
+      background: var(--secondary);
+      color: var(--bg-color);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    /* Form Sections */
+    .form-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .input-group label {
+      margin-bottom: 0.5rem;
+      color: var(--muted-text);
+      font-weight: 600;
+    }
+    .input-group input[type="number"] {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-group input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
+      outline: none;
+    }
+
+    /* Calculate Button */
+    .calculate-btn {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: var(--bg-color);
+      font-size: 1.125rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .calculate-btn:hover {
+      transform: scale(1.03);
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+    }
+    .calculate-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Impact Analysis Section */
+    .impact-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .impact-container.visible {
+      opacity: 1;
+    }
+    .impact-column {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    /* Different header colors for each impact column */
+    .risk-column h4 {
+      background: #FF6B6B; /* Warm red for risks */
+    }
+    .growth-column h4 {
+      background: #4CAF50; /* Fresh green for growth */
+    }
+    .result {
+      background: var(--card-bg);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .result:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+    .result h5 {
+      display: flex;
+      align-items: center;
+      font-size: 1.05rem;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+    .result .arrow {
+      font-size: 1.75rem;
+      margin-right: 0.75rem;
+      color: var(--secondary);
+    }
+    .result p {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    .result small {
+      display: block;
+      margin-top: 0.5rem;
+      font-style: italic;
+      color: var(--muted-text);
+    }
+    .loss {
+      background: rgba(255, 77, 77, 0.15);
+      border-color: rgba(255, 77, 77, 0.3);
+    }
+    .gain {
+      background: rgba(77, 255, 136, 0.15);
+      border-color: rgba(77, 255, 136, 0.3);
+    }
+
+    /* GuestTouch CTA Section */
+    .cta-section {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border: 2px solid var(--secondary);
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+    .cta-section:hover {
+      transform: scale(1.02);
+    }
+    .cta-section h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      margin-bottom: 1.5rem;
+      color: var(--muted-text);
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: var(--cta-color);
+      color: var(--bg-color);
+      font-size: 1.125rem;
+      font-weight: 700;
+      border: 2px solid var(--cta-color);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.2s ease, border 0.3s ease;
+    }
+    .cta-btn:hover {
+      transform: scale(1.03);
+      background: var(--cta-hover);
+      border-color: var(--cta-hover);
+    }
+    .cta-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Sources Footer */
+    .citation {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-top: 2rem;
+      line-height: 1.5;
+    }
+
+    /* Explanation Section (Collapsible) */
+    .explanation-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: var(--muted-text);
+      line-height: 1.7;
+      display: none;
+    }
+    .explanation-section h3 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    .explanation-section p {
+      margin-bottom: 0.75rem;
+    }
+    .explanation-section ul {
+      margin-left: 1.5rem;
+      list-style-type: disc;
+      margin-bottom: 1rem;
+    }
+    .toggle-btn {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 1rem auto;
+      padding: 0.75rem;
+      background: var(--cta-color);
+      color: var(--bg-color);
+      font-size: 1rem;
+      font-weight: 600;
+      border: 2px solid var(--cta-color);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease, border 0.3s ease;
+    }
+    .toggle-btn:hover {
+      transform: scale(1.03);
+      background: var(--cta-hover);
+      border-color: var(--cta-hover);
+    }
+    .toggle-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .calculate-btn {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <h1>Hotel Reviews &amp; Reputation Impact Calculator</h1>
+    <h2>Based on Actual Studies and Data</h2>
+    
+    <!-- Hotel Information Section -->
+    <section id="hotel-info" class="form-section">
+      <div class="section-header">
+        <h3>Hotel Information</h3>
+      </div>
+      <p class="help-text">Share details about your property to assess your current performance.</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="currentRating">Current Rating (stars, 1–5)</label>
+          <input type="number" id="currentRating" min="1" max="5" step="0.1" value="4">
+        </div>
+        <div class="input-group">
+          <label for="averageNightlyRate">Average Nightly Rate ($)</label>
+          <input type="number" id="averageNightlyRate" min="0" value="200">
+        </div>
+        <div class="input-group">
+          <label for="occupancyRate">Occupancy Rate (%)</label>
+          <input type="number" id="occupancyRate" min="0" max="100" value="70">
+        </div>
+        <div class="input-group">
+          <label for="numberOfRooms">Number of Rooms (max 8,000)</label>
+          <input type="number" id="numberOfRooms" min="0" max="8000" value="100">
+        </div>
+      </div>
+    </section>
+    
+    <!-- Reviews & Reputation Section -->
+    <section id="reviews-reputation" class="form-section">
+      <div class="section-header">
+        <h3>Reviews &amp; Reputation</h3>
+      </div>
+      <p class="help-text"><span class="highlight">Tip:</span> Values are derived from studies—adjust if you have different insights.</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="bookingDropReview">Booking Drop per Negative Review (%)</label>
+          <input type="number" id="bookingDropReview" min="0" step="0.1" value="2">
+        </div>
+        <div class="input-group">
+          <label for="newBookingsNegative">New Bookings Influenced by Negative Reviews</label>
+          <input type="number" id="newBookingsNegative" min="0" value="5">
+        </div>
+        <div class="input-group">
+          <label for="newPositiveReviews">New Positive Reviews</label>
+          <input type="number" id="newPositiveReviews" min="0" value="10">
+        </div>
+        <div class="input-group">
+          <label for="conversionIncrease">Conversion Increase per Positive Review (%)</label>
+          <input type="number" id="conversionIncrease" min="0" step="0.1" value="0.5">
+        </div>
+        <div class="input-group">
+          <label for="adrIncrease">ADR Increase from Stellar Reputation (%)</label>
+          <input type="number" id="adrIncrease" min="0" step="0.1" value="5">
+        </div>
+      </div>
+    </section>
+    
+    <!-- Notification Area for Errors -->
+    <div id="notification"></div>
+    
+    <!-- Calculate Button -->
+    <button class="calculate-btn" id="calculateBtn">Calculate Impact</button>
+    
+    <!-- Impact Analysis Section -->
+    <section id="results-section" class="impact-container">
+      <!-- Left Column: Current Impact & Risks -->
+      <div class="impact-column risk-column">
+        <h4>Current Impact &amp; Risks</h4>
+        <div class="result" id="currentRevenueResult">
+          <h5><span class="arrow">&#128176;</span>Estimated Annual Revenue</h5>
+          <p id="currentRevenue">$0</p>
+        </div>
+        <div class="result loss" id="ratingDropResult">
+          <h5><span class="arrow">&#8595;</span>Potential Annual Loss (1-star drop)</h5>
+          <p id="ratingDrop">$0</p>
+          <small>💰 Harvard Business School (Luca, 2016): 1-star drop = 5-9% revenue loss.</small>
+        </div>
+        <div class="result loss" id="negativeReviewLossResult">
+          <h5><span class="arrow">&#8595;</span>Lost Revenue from Negative Reviews</h5>
+          <p id="negativeReviewLoss">$0</p>
+          <small>🔻 Moz Study: Negative reviews have a larger impact when reviews are few.<br>
+          Calculation = (Drop per Review) × (New Bookings Influenced) × ADR × 365</small>
+        </div>
+      </div>
+      
+      <!-- Right Column: Opportunities for Growth -->
+      <div class="impact-column growth-column">
+        <h4>Opportunities for Growth</h4>
+        <div class="result gain" id="ratingGainResult">
+          <h5><span class="arrow">&#8593;</span>Potential Annual Gain (Rating Improvement)</h5>
+          <p id="ratingGain">$0</p>
+          <small>📈 Cornell Study: Higher ratings = 11% more per night.</small>
+        </div>
+        <div class="result gain" id="positiveReviewGainResult">
+          <h5><span class="arrow">&#8593;</span>Revenue Gained from Positive Reviews</h5>
+          <p id="positiveReviewGain">$0</p>
+          <small>🔺 Phocuswright: Positive reviews boost conversion rates.</small>
+        </div>
+        <div class="result gain" id="adrIncreaseResult">
+          <h5><span class="arrow">&#8593;</span>Additional Revenue from Higher Reputation</h5>
+          <p id="adrRevenue">$0</p>
+          <small>📈 Cornell Study: A stellar reputation helps raise ADR.</small>
+        </div>
+      </div>
+    </section>
+    
+    <!-- GuestTouch CTA Section -->
+    <section class="cta-section">
+      <h3>Ace Your Online Reputation With GuestTouch</h3>
+      <p>Take your hotel's reputation to the next level. Discover how GuestTouch helps hotels globally drive more positive reviews, boost guest satisfaction, and ultimately increase revenue.</p>
+      <a href="https://www.guesttouch.com/demo" target="_blank" class="cta-btn">Take Control of Your Online Reputation</a>
+    </section>
+    
+    <!-- Sources Footer -->
+    <div class="citation">
+      Sources:<br>
+      💰 <strong>Harvard Business School (Luca, 2016)</strong>: 1-star drop = 5-9% revenue loss.<br>
+      📈 <strong>Cornell Study</strong>: Higher ratings enable charging 11% more per night and increasing ADR.<br>
+      🔻 <strong>Moz Study</strong>: Negative reviews have a larger impact when review counts are low.<br>
+      🔺 <strong>Phocuswright</strong>: Positive reviews boost conversion rates exponentially.
+    </div>
+    
+    <!-- Explanation Section (Collapsible) -->
+    <button class="toggle-btn" id="toggleExplanation">The Math Behind Studies</button>
+    <section class="explanation-section" id="explanationSection">
+      <h3>Explain Math Behind Studies</h3>
+      <p><strong>Estimated Annual Revenue:</strong> Calculated using:</p>
+      <p style="text-align:center;">Estimated Annual Revenue = Average Nightly Rate × Number of Rooms × (Occupancy Rate / 100) × 365</p>
+      <p>This provides an annual revenue estimate based on your current operational metrics.</p>
+      
+      <p><strong>Potential Annual Loss:</strong> Assuming a 1-star drop results in a 7% revenue loss:</p>
+      <p style="text-align:center;">Potential Annual Loss = Estimated Annual Revenue × 0.07</p>
+      <p>This estimates the loss in revenue if your hotel's rating drops by one star.</p>
+      
+      <p><strong>Potential Annual Gain:</strong> Conversely, an improved rating can yield an 11% gain:</p>
+      <p style="text-align:center;">Potential Annual Gain = Estimated Annual Revenue × 0.11</p>
+      <p>This reflects the opportunity to increase revenue with better ratings.</p>
+      
+      <p><strong>Impact from Reviews:</strong></p>
+      <ul>
+        <li><em>Lost Revenue from Negative Reviews:</em> Calculated as the product of the booking drop percentage per negative review, the number of new bookings influenced by negative reviews, the Average Nightly Rate, and 365 days.</li>
+        <li><em>Revenue Gained from Positive Reviews:</em> Determined by multiplying the number of new positive reviews, the conversion increase percentage per review, and the Estimated Annual Revenue.</li>
+        <li><em>ADR Increase from Higher Reputation:</em> Represents additional revenue when the hotel raises its Average Daily Rate due to an improved reputation.</li>
+      </ul>
+      <p>All calculations are based on a rating scale of 1 to 5. If you use a 1–10 scale (e.g., on Booking.com), simply divide your rating by 2 before entering it here.</p>
+    </section>
+    
+  </div>
+
+  <script>
+    // Format a number as USD currency
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+    
+    // Display a funny but relevant error notification
+    function showError(message) {
+      const notification = document.getElementById('notification');
+      notification.className = 'error';
+      notification.textContent = message;
+      notification.style.display = 'block';
+    }
+    
+    // Clear the error notification
+    function clearError() {
+      const notification = document.getElementById('notification');
+      notification.textContent = '';
+      notification.style.display = 'none';
+    }
+    
+    function calculateResults() {
+      clearError();
+      
+      // Retrieve input values
+      const currentRating = parseFloat(document.getElementById('currentRating').value) || 0;
+      const averageNightlyRate = parseFloat(document.getElementById('averageNightlyRate').value) || 0;
+      const occupancyRate = parseFloat(document.getElementById('occupancyRate').value) || 0;
+      const numberOfRooms = parseFloat(document.getElementById('numberOfRooms').value) || 0;
+      
+      // Error handling for rating (must be between 1 and 5)
+      if (currentRating < 1 || currentRating > 5) {
+        showError("Whoa! Our calculator only handles ratings from 1 to 5. If you're using a 1–10 scale (like Booking.com), simply divide your rating by 2.");
+        return;
+      }
+      
+      // Error handling for occupancy (must be between 0 and 100)
+      if (occupancyRate < 0 || occupancyRate > 100) {
+        showError("Uh oh! Occupancy should be between 0 and 100. Unless you're hosting ghost guests?");
+        return;
+      }
+      
+      // Error handling for number of rooms (max 8000)
+      if (numberOfRooms > 8000) {
+        showError("That number will make you the biggest hotel in the world (current highest is 7,351 rooms; for calculation's sake, keep it below 8,001).");
+        return;
+      }
+      
+      // Calculation logic (based on a 1–5 rating scale)
+      const currentRevenue = averageNightlyRate * numberOfRooms * (occupancyRate / 100) * 365;
+      const ratingDropImpact = currentRevenue * 0.07;   // 7% loss for a 1-star drop
+      const ratingIncreaseImpact = currentRevenue * 0.11; // 11% gain for rating improvement
+      const bookingDropReview = parseFloat(document.getElementById('bookingDropReview').value) || 0;
+      const newBookingsNegative = parseFloat(document.getElementById('newBookingsNegative').value) || 0;
+      const negativeReviewLoss = (bookingDropReview / 100) * newBookingsNegative * averageNightlyRate * 365;
+      const newPositiveReviews = parseFloat(document.getElementById('newPositiveReviews').value) || 0;
+      const conversionIncrease = parseFloat(document.getElementById('conversionIncrease').value) || 0;
+      const positiveReviewGain = newPositiveReviews * (conversionIncrease / 100) * currentRevenue;
+      const adrIncrease = parseFloat(document.getElementById('adrIncrease').value) || 0;
+      const adrRevenue = (adrIncrease / 100) * averageNightlyRate * (numberOfRooms * (occupancyRate / 100)) * 365;
+      
+      // Update results in the DOM
+      document.getElementById('currentRevenue').textContent = formatCurrency(currentRevenue);
+      document.getElementById('ratingDrop').textContent = formatCurrency(ratingDropImpact);
+      document.getElementById('ratingGain').textContent = formatCurrency(ratingIncreaseImpact);
+      document.getElementById('negativeReviewLoss').textContent = formatCurrency(negativeReviewLoss);
+      document.getElementById('positiveReviewGain').textContent = formatCurrency(positiveReviewGain);
+      document.getElementById('adrRevenue').textContent = formatCurrency(adrRevenue);
+      
+      // Reveal the results section with a fade-in effect
+      document.getElementById('results-section').classList.add('visible');
+    }
+    
+    // Listen for clicks on the Calculate button
+    document.getElementById('calculateBtn').addEventListener('click', calculateResults);
+
+    // Toggle the explanation section
+    document.getElementById('toggleExplanation').addEventListener('click', function() {
+      const explanation = document.getElementById('explanationSection');
+      if (explanation.style.display === 'none' || explanation.style.display === '') {
+        explanation.style.display = 'block';
+        this.textContent = 'Hide Explanation';
+      } else {
+        explanation.style.display = 'none';
+        this.textContent = 'Show Explanation';
+      }
+    });
+  </script>
+</body>
+</html>
