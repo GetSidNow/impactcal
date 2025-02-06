@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,17 +8,16 @@
   <!-- Import Google Fonts for a modern look -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Variables using GuestTouch colors */
+    /* CSS Variables using GuestTouch Reputation Platform colors */
     :root {
       --bg-gradient: linear-gradient(90deg, #8c52ff, #5ce1e6);
       --container-bg: #ffffff;
       --primary: #ffffff;         /* For surfaces */
-      --secondary: #0038e0;        /* Deep blue accent */
-      --accent: #0056b0;           /* Lighter blue accent */
-      /* Updated CTA button styling will use the secondary color as border/text */
+      --secondary: #0038e0;       /* Deep blue accent */
+      --accent: #0056b0;          /* Lighter blue accent */
       --cta-color: transparent;
       --cta-hover: #0038e0;
-      --text-color: #333333;       /* Dark text for readability */
+      --text-color: #333333;      /* Dark text for readability */
       --muted-text: #777777;
       --border-color: #dddddd;
     }
@@ -63,6 +63,13 @@
     }
     p {
       margin-bottom: 1rem;
+    }
+
+    /* GuestTouch Icon at the Top */
+    .guesttouch-icon {
+      display: block;
+      margin: 0 auto 1rem auto;
+      max-width: 150px;
     }
 
     /* Tripadvisor Logo */
@@ -456,9 +463,15 @@
 </head>
 <body>
   <div class="container">
+    <!-- GuestTouch Icon at the Top -->
+    <a href="https://www.guesttouch.com" target="_blank">
+      <img class="guesttouch-icon" src="https://cdn.prod.website-files.com/62c2a83de7fe5c513c65b6e8/62e3b095dcfdb954b5f77076_gt-logo-text-black-p-500.png" alt="GuestTouch Logo">
+    </a>
+    
     <!-- Header -->
     <h1>Hotel Reviews &amp; Reputation Impact Calculator</h1>
     <h2>Based on Actual Studies and Data</h2>
+    
     <!-- Tripadvisor Logo -->
     <img class="tripadvisor-logo" src="https://cdn.prod.website-files.com/62c2a83de7fe5c513c65b6e8/640ff15d7250a346e08d747d_TripadvisorPartner_Lockup_LightMode-p-800.png" alt="Tripadvisor Logo">
     
