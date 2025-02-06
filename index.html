@@ -7,20 +7,19 @@
   <!-- Import Google Fonts for a modern look -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Variables for easy color adjustments */
+    /* CSS Variables using GuestTouch colors */
     :root {
-      --bg-color: #121212;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --primary: #BB86FC; /* Neon-ish purple */
-      --secondary: #03DAC6; /* Neon turquoise */
-      --accent: #FF4081; /* Vibrant pink, used sparingly */
-      /* CTA colors now subtler */
-      --cta-color: #6C757D;
-      --cta-hover: #5A6268;
-      --text-color: #E0E0E0;
-      --muted-text: #AAAAAA;
-      --border-color: rgba(255, 255, 255, 0.1);
-      --cta-border: rgba(108, 117, 125, 0.7);
+      --bg-gradient: linear-gradient(90deg, #8c52ff, #5ce1e6);
+      --container-bg: #ffffff;
+      --primary: #ffffff;         /* For surfaces */
+      --secondary: #0038e0;        /* Deep blue accent */
+      --accent: #0056b0;           /* Lighter blue accent */
+      /* Updated CTA button styling will use the secondary color as border/text */
+      --cta-color: transparent;
+      --cta-hover: #0038e0;
+      --text-color: #333333;       /* Dark text for readability */
+      --muted-text: #777777;
+      --border-color: #dddddd;
     }
 
     /* Global Reset & Base Styles */
@@ -31,19 +30,19 @@
     }
     body {
       font-family: 'Poppins', sans-serif;
-      background: var(--bg-color);
+      background: var(--bg-gradient);
       color: var(--text-color);
       line-height: 1.6;
       padding: 20px;
       min-height: 100vh;
     }
-    h1, h2, h3, h4 {
+    h1, h2, h3, h4, p {
       text-align: center;
       margin-bottom: 1rem;
     }
     h1 {
       font-size: 2.5rem;
-      color: var(--primary);
+      color: var(--secondary);
     }
     h2 {
       font-size: 1.25rem;
@@ -56,7 +55,8 @@
     }
     h4 {
       font-size: 1.25rem;
-      color: var(--bg-color);
+      color: var(--primary);
+      background: var(--secondary);
       padding: 0.75rem;
       border-radius: 6px;
       margin-bottom: 1.5rem;
@@ -65,7 +65,14 @@
       margin-bottom: 1rem;
     }
 
-    /* Notification Area - More Subtle */
+    /* Tripadvisor Logo */
+    .tripadvisor-logo {
+      display: block;
+      margin: 0.5rem auto 1rem auto;
+      max-width: 200px;
+    }
+
+    /* Notification Area - Subtle */
     #notification {
       text-align: center;
       padding: 10px;
@@ -73,26 +80,20 @@
       margin: 1rem auto;
       max-width: 500px;
       font-size: 0.95rem;
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--muted-text);
-      border: 1px solid var(--border-color);
+      background: #ffecec;
+      color: #cc0000;
+      border: 1px solid #ffcccc;
       display: none;
     }
-    #notification.error {
-      background: rgba(255, 235, 238, 0.15);
-      color: #FFCDD2;
-      border: 1px solid rgba(255, 205, 210, 0.5);
-    }
 
-    /* Main Container - Glassmorphism Style */
+    /* Main Container */
     .container {
       max-width: 1100px;
       margin: 0 auto;
-      background: rgba(255, 255, 255, 0.07);
-      backdrop-filter: blur(10px);
+      background: var(--container-bg);
       border-radius: 16px;
       padding: 40px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
       animation: fadeInScale 0.8s ease-out;
     }
     @keyframes fadeInScale {
@@ -113,7 +114,7 @@
     }
     .highlight {
       background: var(--secondary);
-      color: var(--bg-color);
+      color: var(--primary);
       padding: 0.5rem 0.75rem;
       border-radius: 6px;
       font-weight: 600;
@@ -123,7 +124,7 @@
 
     /* Form Sections */
     .form-section {
-      background: var(--card-bg);
+      background: var(--primary);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 1.5rem;
@@ -148,14 +149,45 @@
       border: 1px solid var(--border-color);
       border-radius: 8px;
       font-size: 1rem;
-      background: rgba(255, 255, 255, 0.1);
+      background: #ffffff;
       color: var(--text-color);
       transition: border 0.3s ease, box-shadow 0.3s ease;
     }
     .input-group input[type="number"]:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(0, 56, 224, 0.3);
       outline: none;
+    }
+
+    /* Tooltip for New Positive Reviews */
+    .tooltip {
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      color: var(--secondary);
+      font-weight: bold;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 220px;
+      background-color: #ffffff;
+      color: #333333;
+      text-align: center;
+      border: 1px solid #cccccc;
+      border-radius: 6px;
+      padding: 5px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -110px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
     }
 
     /* Calculate Button */
@@ -165,8 +197,8 @@
       max-width: 300px;
       margin: 2rem auto;
       padding: 1rem;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: var(--bg-color);
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      color: var(--primary);
       font-size: 1.125rem;
       font-weight: 700;
       border: none;
@@ -176,7 +208,7 @@
     }
     .calculate-btn:hover {
       transform: scale(1.03);
-      background: linear-gradient(135deg, var(--accent), var(--primary));
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
     }
     .calculate-btn:active {
       transform: scale(0.98);
@@ -194,11 +226,11 @@
       opacity: 1;
     }
     .impact-column {
-      background: var(--card-bg);
+      background: var(--primary);
       border-radius: 16px;
       padding: 1.5rem;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     /* Different header colors for each impact column */
     .risk-column h4 {
@@ -208,7 +240,7 @@
       background: #4CAF50; /* Fresh green for growth */
     }
     .result {
-      background: var(--card-bg);
+      background: var(--primary);
       padding: 1rem 1.25rem;
       border-radius: 8px;
       border: 1px solid var(--border-color);
@@ -225,7 +257,7 @@
     }
     .result:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
     .result h5 {
       display: flex;
@@ -264,7 +296,7 @@
       text-align: center;
       margin-top: 2rem;
       padding: 1.5rem;
-      background: var(--card-bg);
+      background: var(--primary);
       border: 2px solid var(--secondary);
       border-radius: 12px;
       transition: transform 0.3s ease;
@@ -273,7 +305,7 @@
       transform: scale(1.02);
     }
     .cta-section h3 {
-      color: var(--primary);
+      color: var(--secondary);
       margin-bottom: 1rem;
     }
     .cta-section p {
@@ -283,28 +315,72 @@
     .cta-btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      background: var(--cta-color);
-      color: var(--bg-color);
+      background: transparent;
+      color: var(--secondary);
       font-size: 1.125rem;
       font-weight: 700;
-      border: 2px solid var(--cta-color);
+      border: 2px solid var(--secondary);
       border-radius: 8px;
       text-decoration: none;
       transition: background 0.3s ease, transform 0.2s ease, border 0.3s ease;
     }
     .cta-btn:hover {
       transform: scale(1.03);
-      background: var(--cta-hover);
-      border-color: var(--cta-hover);
+      background: var(--secondary);
+      color: var(--primary);
+      border-color: var(--secondary);
     }
     .cta-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* GuestTouch Reputation Platform Section */
+    .platform-section {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--primary);
+      border: 2px solid var(--secondary);
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+    .platform-section:hover {
+      transform: scale(1.02);
+    }
+    .platform-section h3 {
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+    .platform-section p {
+      margin-bottom: 1.5rem;
+      color: var(--muted-text);
+    }
+    .platform-btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      color: var(--secondary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      border: 2px solid var(--secondary);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.2s ease, border 0.3s ease;
+    }
+    .platform-btn:hover {
+      transform: scale(1.03);
+      background: var(--secondary);
+      color: var(--primary);
+      border-color: var(--secondary);
+    }
+    .platform-btn:active {
       transform: scale(0.98);
     }
 
     /* Sources Footer */
     .citation {
       text-align: center;
-      background: rgba(255, 255, 255, 0.05);
+      background: #f2f2f2;
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 1rem;
@@ -319,7 +395,7 @@
     .explanation-section {
       margin-top: 2rem;
       padding: 1.5rem;
-      background: var(--card-bg);
+      background: var(--primary);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       font-size: 0.95rem;
@@ -329,7 +405,7 @@
     }
     .explanation-section h3 {
       margin-bottom: 1rem;
-      color: var(--primary);
+      color: var(--secondary);
     }
     .explanation-section p {
       margin-bottom: 0.75rem;
@@ -383,6 +459,8 @@
     <!-- Header -->
     <h1>Hotel Reviews &amp; Reputation Impact Calculator</h1>
     <h2>Based on Actual Studies and Data</h2>
+    <!-- Tripadvisor Logo -->
+    <img class="tripadvisor-logo" src="https://cdn.prod.website-files.com/62c2a83de7fe5c513c65b6e8/640ff15d7250a346e08d747d_TripadvisorPartner_Lockup_LightMode-p-800.png" alt="Tripadvisor Logo">
     
     <!-- Hotel Information Section -->
     <section id="hotel-info" class="form-section">
@@ -426,7 +504,12 @@
           <input type="number" id="newBookingsNegative" min="0" value="5">
         </div>
         <div class="input-group">
-          <label for="newPositiveReviews">New Positive Reviews</label>
+          <label for="newPositiveReviews">
+            New Positive Reviews 
+            <span class="tooltip">[?]
+              <span class="tooltiptext">Estimate the extra positive reviews you expect to receive if your reputation improves.</span>
+            </span>
+          </label>
           <input type="number" id="newPositiveReviews" min="0" value="10">
         </div>
         <div class="input-group">
@@ -496,6 +579,13 @@
       <a href="https://www.guesttouch.com/demo" target="_blank" class="cta-btn">Take Control of Your Online Reputation</a>
     </section>
     
+    <!-- GuestTouch Reputation Platform Section -->
+    <section class="platform-section cta-section">
+      <h3>GuestTouch Reputation Platform</h3>
+      <p>Explore our full suite of reputation management tools to monitor, enhance, and take control of your online reputation. Stay ahead of the competition and delight your guests.</p>
+      <a href="https://www.guesttouch.com/reputation-management" target="_blank" class="platform-btn">Explore the Platform</a>
+    </section>
+    
     <!-- Sources Footer -->
     <div class="citation">
       Sources:<br>
@@ -506,7 +596,7 @@
     </div>
     
     <!-- Explanation Section (Collapsible) -->
-    <button class="toggle-btn" id="toggleExplanation">The Math Behind Studies</button>
+    <button class="toggle-btn" id="toggleExplanation">Show Math</button>
     <section class="explanation-section" id="explanationSection">
       <h3>Explain Math Behind Studies</h3>
       <p><strong>Estimated Annual Revenue:</strong> Calculated using:</p>
@@ -523,9 +613,9 @@
       
       <p><strong>Impact from Reviews:</strong></p>
       <ul>
-        <li><em>Lost Revenue from Negative Reviews:</em> Calculated as the product of the booking drop percentage per negative review, the number of new bookings influenced by negative reviews, the Average Nightly Rate, and 365 days.</li>
-        <li><em>Revenue Gained from Positive Reviews:</em> Determined by multiplying the number of new positive reviews, the conversion increase percentage per review, and the Estimated Annual Revenue.</li>
-        <li><em>ADR Increase from Higher Reputation:</em> Represents additional revenue when the hotel raises its Average Daily Rate due to an improved reputation.</li>
+        <li><em>Lost Revenue from Negative Reviews:</em> Calculated as: (Booking Drop per Negative Review ÷ 100) × (Number of New Bookings Influenced by Negative Reviews) × Average Nightly Rate × 365.</li>
+        <li><em>Revenue Gained from Positive Reviews:</em> Estimate the extra positive reviews you expect if your reputation improves. Multiply the estimated extra reviews by the conversion increase percentage (as a decimal) and then by the Estimated Annual Revenue.</li>
+        <li><em>ADR Increase from Higher Reputation:</em> Represents additional revenue when your hotel raises its Average Daily Rate due to an improved reputation.</li>
       </ul>
       <p>All calculations are based on a rating scale of 1 to 5. If you use a 1–10 scale (e.g., on Booking.com), simply divide your rating by 2 before entering it here.</p>
     </section>
@@ -612,15 +702,15 @@
     // Listen for clicks on the Calculate button
     document.getElementById('calculateBtn').addEventListener('click', calculateResults);
 
-    // Toggle the explanation section
+    // Toggle the explanation section when "Show Math" is clicked
     document.getElementById('toggleExplanation').addEventListener('click', function() {
       const explanation = document.getElementById('explanationSection');
       if (explanation.style.display === 'none' || explanation.style.display === '') {
         explanation.style.display = 'block';
-        this.textContent = 'Hide Explanation';
+        this.textContent = 'Hide Math';
       } else {
         explanation.style.display = 'none';
-        this.textContent = 'Show Explanation';
+        this.textContent = 'Show Math';
       }
     });
   </script>
